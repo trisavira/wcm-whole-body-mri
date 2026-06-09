@@ -15,7 +15,8 @@ export const images = {
   heroBackgroundSrcSet: unsplashSrcSet(HERO_ID),
 
   mriScanner: unsplash("photo-1666214280352-db292c05fd80", 1920, 88),
-  patientInScanner: unsplash("photo-1576671414121-aa0c81c869e1", 1920, 88),
+  /** Open MRI scanner — calm, diagnostic imaging (not radiation-oncology masks) */
+  patientInScanner: unsplash("photo-1666214282459-c7dff167ecc0", 1920, 88),
   mriSuite: unsplash("photo-1666214282158-f9a0abed8472", 1920, 88),
   mriScannerAlt: unsplash("photo-1666214282459-c7dff167ecc0", 1920, 88),
 
@@ -38,7 +39,7 @@ export const images = {
 
 export const imageCrop = {
   hero: "center 45%",
-  patientScan: "center 35%",
+  patientScan: "center 50%",
   consultation: "center 30%",
   radiology: "center 45%",
   suite: "center 50%",

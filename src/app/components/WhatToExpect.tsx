@@ -23,7 +23,7 @@ const journey = [
     title: "Your scan",
     description: "Relax in a comfortable MRI suite. The scan typically takes about 45 minutes with no radiation.",
     image: images.patientInScanner,
-    imageAlt: "Patient receiving a whole-body MRI scan",
+    imageAlt: "Modern MRI scanner in a bright imaging suite",
     objectPosition: imageCrop.patientScan,
     color: "#cf4520",
   },

@@ -21,7 +21,7 @@ const steps = [
     title: "Complete your Whole-Body MRI",
     description: "One radiation-free visit evaluates many regions of the body. Most patients spend about 45 minutes in the scanner, with brief preparation before and after.",
     image: images.patientInScanner,
-    imageAlt: "Patient inside the MRI scanner during imaging",
+    imageAlt: "Modern MRI scanner in a comfortable imaging suite",
     objectPosition: imageCrop.patientScan,
   },
   {

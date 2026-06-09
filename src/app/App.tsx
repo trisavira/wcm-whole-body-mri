@@ -2,7 +2,6 @@ import { useEffect } from "react";
 import { Navbar } from "./components/Navbar";
 import { Hero } from "./components/Hero";
 import { WhatIsWBMRI } from "./components/WhatIsWBMRI";
-import { StatInsightStrip } from "./components/StatInsightStrip";
 import { BodyExplorer } from "./components/BodyExplorer";
 import { WhyConsider } from "./components/WhyConsider";
 import { WhatToExpect } from "./components/WhatToExpect";
@@ -29,7 +28,6 @@ export default function App() {
       <Navbar />
       <Hero />
       <WhatIsWBMRI />
-      <StatInsightStrip />
       <BodyExplorer />
       <WhyConsider />
       <WhatToExpect />
