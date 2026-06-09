@@ -4,6 +4,7 @@ import { ChevronRight, CheckCircle2, X, Info } from "lucide-react";
 import bodyAnatomyImage from "../../assets/body-anatomy.jpg";
 import { trackBodyRegion } from "../../lib/analytics";
 import { SectionIntro } from "./SectionIntro";
+import { ParallaxFloat, ParallaxOrbs, useSectionParallax } from "./ParallaxImage";
 type Region = {
   id: string;
   label: string;
@@ -52,6 +53,15 @@ const regions: Region[] = [
     education: "Bones and soft tissues in the arms and legs are scanned for masses, injuries, and other changes. Your report will note anything that may benefit from a specialist consultation.",
   },
 ];
+
+const regionZoom: Record<string, { scale: number; originY: string }> = {
+  brain: { scale: 2.8, originY: "12%" },
+  chest: { scale: 2.4, originY: "32%" },
+  abdomen: { scale: 2.4, originY: "52%" },
+  spine: { scale: 3, originY: "42%" },
+  pelvis: { scale: 2.4, originY: "68%" },
+  extremities: { scale: 1.9, originY: "50%" },
+};
 
 // ── Realistic anatomy map with interactive hotspots ──
 type AnatomyHotspot = {
@@ -107,12 +117,16 @@ function AnatomyMap({ activeId, hoveredId, onRegionClick, onRegionHover }: Anato
   const isLit = (id: string) => activeId === id || hoveredId === id;
 
   return (
-    <div className="relative w-[280px]" style={{ aspectRatio: "600 / 833" }}>
+    <div className="relative w-[280px] overflow-hidden rounded-xl" style={{ aspectRatio: "600 / 833" }}>
       <img
         src={bodyAnatomyImage}
         alt="Human muscular and skeletal anatomy — anterior view"
-        className="w-full h-full object-cover rounded-xl"
-        style={{ filter: activeId ? "none" : "saturate(0.85) contrast(1.05)" }}
+        className="w-full h-full object-cover object-center"
+        style={{
+          filter: activeId ? "none" : "saturate(0.85) contrast(1.05)",
+          transform: "scale(1.06)",
+          transformOrigin: "center center",
+        }}
         draggable={false}
       />
 
@@ -220,27 +234,44 @@ export function BodyExplorer() {
     setActiveId((prev) => (prev === id ? null : id));
   };
 
-  return (
-    <section id="body-explorer" ref={ref} className="relative py-20 overflow-hidden" style={{ background: "var(--wcm-bg-light)" }}>
-      <div className="absolute inset-0 bg-[linear-gradient(rgba(207,69,32,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(207,69,32,0.03)_1px,transparent_1px)] bg-[size:60px_60px]" />
+  const zoom = activeId ? regionZoom[activeId] : { scale: 1, originY: "50%" };
+  const { ySlow, yFast, yReverse } = useSectionParallax(ref);
 
-      <div className="relative max-w-7xl mx-auto px-6">
-        <SectionIntro title="What does it detect?" inView={inView}>
-          Whole-Body MRI looks at many areas of the body in a single visit. Tap a region to learn what may be found — described in clear, patient-friendly language, not medical jargon.
+  return (
+    <section id="body-explorer" ref={ref} className="relative min-h-screen py-16 lg:py-20 overflow-hidden flex flex-col" style={{ background: "var(--wcm-bg-light)" }}>
+      <ParallaxOrbs sectionRef={ref} variant="warm" />
+      <motion.div
+        className="absolute inset-0 bg-[linear-gradient(rgba(0,0,0,0.025)_1px,transparent_1px),linear-gradient(90deg,rgba(0,0,0,0.025)_1px,transparent_1px)] bg-[size:60px_60px]"
+        style={{ y: yFast }}
+      />
+
+      <div className="relative max-w-7xl mx-auto px-6 flex-1 flex flex-col">
+        <SectionIntro eyebrow="What we evaluate" title="What does it detect?" inView={inView}>
+          Whole-Body MRI looks at many areas of the body in a single visit. Select a region to zoom in and learn what may be found — in clear, patient-friendly language.
         </SectionIntro>
 
-        <div className="flex flex-col lg:flex-row gap-12 items-start">
-          {/* Anatomy map */}
-          <motion.div initial={{ opacity: 0, x: -30 }} animate={inView ? { opacity: 1, x: 0 } : {}} transition={{ duration: 0.7, delay: 0.15 }}
-            className="lg:w-[320px] flex flex-col items-center mx-auto lg:mx-0 shrink-0"
-          >
-            <div className="mb-5 flex items-center gap-2 px-3 py-1.5 rounded-full" style={{ background: "rgba(207,69,32,0.07)", border: "1px solid rgba(207,69,32,0.18)" }}>
+        <div className="flex flex-col lg:flex-row gap-8 lg:gap-12 items-stretch flex-1">
+          <ParallaxFloat y={ySlow} className="lg:w-[42%] flex flex-col items-center mx-auto lg:mx-0 shrink-0">
+            <motion.div
+              initial={{ opacity: 0, x: -30 }}
+              animate={inView ? { opacity: 1, x: 0 } : {}}
+              transition={{ duration: 0.7, delay: 0.15 }}
+              className="w-full flex flex-col items-center"
+            >
+            <div className="mb-4 flex items-center gap-2 px-3 py-1.5 rounded-full" style={{ background: "rgba(207,69,32,0.07)", border: "1px solid rgba(207,69,32,0.18)" }}>
               <Info className="w-3.5 h-3.5" style={{ color: "#cf4520" }} />
-              <span style={{ fontSize: "12px", color: "var(--wcm-text-secondary)" }}>Click a region on the anatomy map</span>
+              <span style={{ fontSize: "12px", color: "var(--wcm-text-secondary)" }}>Tap a region to zoom in</span>
             </div>
 
-            <div className="relative p-3 rounded-2xl" style={{ background: "#ffffff", border: "1px solid rgba(0,0,0,0.08)", boxShadow: "0 4px 20px rgba(0,0,0,0.08)" }}>
-              <AnatomyMap activeId={activeId} hoveredId={hoveredId} onRegionClick={handleClick} onRegionHover={setHoveredId} />
+            <div className="relative p-3 rounded-2xl w-full max-w-[360px] overflow-hidden" style={{ background: "#ffffff", border: "1px solid rgba(0,0,0,0.08)", boxShadow: "0 8px 32px rgba(0,0,0,0.1)", minHeight: "460px" }}>
+              <motion.div
+                className="origin-center"
+                animate={{ scale: zoom.scale }}
+                transition={{ type: "spring", stiffness: 90, damping: 18 }}
+                style={{ transformOrigin: `50% ${zoom.originY}` }}
+              >
+                <AnatomyMap activeId={activeId} hoveredId={hoveredId} onRegionClick={handleClick} onRegionHover={setHoveredId} />
+              </motion.div>
             </div>
 
             {/* Legend buttons */}
@@ -259,10 +290,10 @@ export function BodyExplorer() {
                 </motion.button>
               ))}
             </div>
-          </motion.div>
+            </motion.div>
+          </ParallaxFloat>
 
-          {/* Info panel */}
-          <div className="flex-1 min-h-[400px]">
+          <ParallaxFloat y={yReverse} className="flex-1 min-h-[400px] lg:min-h-[500px]">
             <AnimatePresence mode="wait">
               {activeRegion ? (
                 <motion.div key={activeRegion.id} initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} transition={{ duration: 0.3 }}
@@ -278,7 +309,7 @@ export function BodyExplorer() {
 
                   <div
                     className="relative rounded-xl overflow-hidden mb-5 px-5 py-4"
-                    style={{ background: `linear-gradient(135deg, ${activeRegion.color}18, ${activeRegion.color}08)`, border: `1px solid ${activeRegion.color}30` }}
+                    style={{ background: activeRegion.lightBg, border: `1px solid ${activeRegion.color}30` }}
                   >
                     <p className="mb-1 uppercase" style={{ fontSize: "10px", fontWeight: 700, letterSpacing: "0.08em", color: activeRegion.color }}>
                       Body region
@@ -355,7 +386,7 @@ export function BodyExplorer() {
                 </motion.div>
               )}
             </AnimatePresence>
-          </div>
+          </ParallaxFloat>
         </div>
       </div>
     </section>

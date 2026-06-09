@@ -6,9 +6,10 @@ type SectionIntroProps = {
   children: ReactNode;
   align?: "center" | "left";
   inView?: boolean;
+  eyebrow?: string;
 };
 
-export function SectionIntro({ title, children, align = "center", inView = true }: SectionIntroProps) {
+export function SectionIntro({ title, children, align = "center", inView = true, eyebrow }: SectionIntroProps) {
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -16,10 +17,18 @@ export function SectionIntro({ title, children, align = "center", inView = true 
       transition={{ duration: 0.5 }}
       className={align === "center" ? "text-center mb-10 max-w-2xl mx-auto" : "mb-10 max-w-3xl"}
     >
-      <h2 style={{ fontSize: "clamp(1.6rem, 3vw, 2.2rem)", fontWeight: 700, color: "var(--wcm-crimson)" }}>
+      {eyebrow && (
+        <p
+          className="mb-3 uppercase tracking-[0.14em]"
+          style={{ fontSize: "11px", fontWeight: 600, color: "var(--wcm-text-secondary)" }}
+        >
+          {eyebrow}
+        </p>
+      )}
+      <h2 style={{ fontSize: "clamp(1.75rem, 3.5vw, 2.5rem)", fontWeight: 700, color: "var(--wcm-crimson)", lineHeight: 1.15 }}>
         {title}
       </h2>
-      <p className="mt-3" style={{ fontSize: "15px", lineHeight: 1.65, color: "var(--wcm-text-muted)" }}>
+      <p className="mt-4" style={{ fontSize: "16px", lineHeight: 1.65, color: "var(--wcm-text-muted)" }}>
         {children}
       </p>
     </motion.div>

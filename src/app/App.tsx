@@ -1,17 +1,16 @@
 import { useEffect } from "react";
 import { Navbar } from "./components/Navbar";
 import { Hero } from "./components/Hero";
-import { TrustBar } from "./components/TrustBar";
 import { WhatIsWBMRI } from "./components/WhatIsWBMRI";
-import { WhyConsider } from "./components/WhyConsider";
-import { WhyChooseUs } from "./components/WhyChooseUs";
+import { StatInsightStrip } from "./components/StatInsightStrip";
 import { BodyExplorer } from "./components/BodyExplorer";
-import { Limitations } from "./components/Limitations";
+import { WhyConsider } from "./components/WhyConsider";
 import { WhatToExpect } from "./components/WhatToExpect";
+import { CTALite } from "./components/CTALite";
 import { ReportPreview } from "./components/ReportPreview";
-import { VideoSection } from "./components/VideoSection";
+import { Limitations } from "./components/Limitations";
+import { WhyChooseUs } from "./components/WhyChooseUs";
 import { Testimonials } from "./components/Testimonials";
-import { FutureProgram } from "./components/FutureProgram";
 import { FAQ } from "./components/FAQ";
 import { CTASection } from "./components/CTASection";
 import { Footer } from "./components/Footer";
@@ -28,24 +27,18 @@ export default function App() {
   return (
     <div className="min-h-screen overflow-x-hidden wcm-body" style={{ background: "var(--wcm-bg-light)" }}>
       <Navbar />
-      {/* Stage 1: Awareness */}
       <Hero />
-      <TrustBar />
       <WhatIsWBMRI />
-      {/* Stage 2–3: Relevance & Trust */}
-      <WhyConsider />
-      <WhyChooseUs />
-      {/* Stage 4: Scope */}
+      <StatInsightStrip />
       <BodyExplorer />
-      <Limitations />
-      {/* Stage 5: Experience */}
+      <WhyConsider />
       <WhatToExpect />
+      <CTALite />
       <ReportPreview />
-      <VideoSection />
+      <Limitations />
+      <WhyChooseUs />
       <Testimonials />
-      <FutureProgram />
       <FAQ />
-      {/* Stage 6: Conversion */}
       <CTASection />
       <Footer />
     </div>

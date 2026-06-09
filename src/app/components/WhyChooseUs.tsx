@@ -1,9 +1,10 @@
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import { motion, useInView } from "motion/react";
 import { Building2, Stethoscope, FileText, Route, HandHeart, Microscope } from "lucide-react";
-import { ImageWithFallback } from "./figma/ImageWithFallback";
-import { images } from "../../lib/images";
 import { SectionIntro } from "./SectionIntro";
+import { VideoModal, VideoTrigger, type VideoContent } from "./VideoModal";
+import { videos } from "../../lib/videos";
+import { ParallaxFloat, ParallaxOrbs, useSectionParallax } from "./ParallaxImage";
 
 const differentiators = [
   { icon: Building2, title: "Academic medical center", description: "Delivered within a leading academic health system — not a standalone screening center.", color: "#b31b1b" },
@@ -17,49 +18,51 @@ const differentiators = [
 export function WhyChooseUs() {
   const ref = useRef<HTMLDivElement>(null);
   const inView = useInView(ref, { once: true, margin: "-80px" });
+  const [openVideo, setOpenVideo] = useState<VideoContent | null>(null);
+  const { ySlow, yFast, yReverse } = useSectionParallax(ref);
 
   return (
-    <section id="why-choose-us" ref={ref} className="relative py-20 overflow-hidden" style={{ background: "#ffffff" }}>
+    <section id="why-choose-us" ref={ref} className="relative py-24 overflow-hidden" style={{ background: "var(--wcm-bg-light)" }}>
+      <ParallaxOrbs sectionRef={ref} variant="warm" />
+
       <div className="relative max-w-7xl mx-auto px-6">
-        <SectionIntro title="Why Weill Cornell Medicine?" inView={inView}>
-          Direct-to-consumer screening is widely available. Our program is fundamentally different — built on academic expertise, integrated care, and responsible clinical stewardship.
-        </SectionIntro>
+        <ParallaxFloat y={yReverse}>
+          <SectionIntro eyebrow="Why WCM" title="Why Weill Cornell Medicine?" inView={inView}>
+          Direct-to-consumer screening is widely available. Our program is built on academic expertise, integrated care, and responsible clinical stewardship.
+          </SectionIntro>
+        </ParallaxFloat>
 
-        <div className="grid lg:grid-cols-12 gap-5 items-stretch">
-          <motion.div
-            initial={{ opacity: 0, x: -20 }}
-            animate={inView ? { opacity: 1, x: 0 } : {}}
-            transition={{ duration: 0.6 }}
-            className="lg:col-span-5 rounded-2xl overflow-hidden min-h-[280px]"
-            style={{ boxShadow: "0 8px 32px rgba(0,0,0,0.1)" }}
-          >
-            <ImageWithFallback src={images.hospital} alt="Weill Cornell Medicine campus" className="w-full h-full object-cover min-h-[280px]" />
-          </motion.div>
-
-          <div className="lg:col-span-7 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-            {differentiators.map((item, i) => {
-              const Icon = item.icon;
-              return (
-                <motion.div
-                  key={item.title}
-                  initial={{ opacity: 0, y: 16 }}
-                  animate={inView ? { opacity: 1, y: 0 } : {}}
-                  transition={{ duration: 0.4, delay: 0.1 + i * 0.05 }}
-                  className="rounded-xl overflow-hidden"
-                  style={{ background: "var(--wcm-bg-light)", border: `1px solid ${item.color}25` }}
-                >
-                  <div className="h-1.5" style={{ background: item.color }} />
-                  <div className="p-4">
-                  <Icon className="w-7 h-7 mb-2" style={{ color: item.color }} />
-                  <p className="mb-1" style={{ fontSize: "13px", fontWeight: 600, color: "var(--wcm-crimson)" }}>{item.title}</p>
-                  <p style={{ fontSize: "12px", lineHeight: 1.5, color: "var(--wcm-text-secondary)" }}>{item.description}</p>
-                  </div>
-                </motion.div>
-              );
-            })}
+        <ParallaxFloat y={ySlow}>
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          {differentiators.map((item, i) => {
+            const Icon = item.icon;
+            return (
+              <motion.div
+                key={item.title}
+                initial={{ opacity: 0, y: 16 }}
+                animate={inView ? { opacity: 1, y: 0 } : {}}
+                transition={{ duration: 0.4, delay: 0.08 + i * 0.05 }}
+                whileHover={{ y: -4, boxShadow: "0 12px 32px rgba(0,0,0,0.08)" }}
+                className="rounded-xl p-5 transition-shadow"
+                style={{ background: "#ffffff", border: `1px solid ${item.color}25` }}
+              >
+                <Icon className="w-8 h-8 mb-3" style={{ color: item.color }} />
+                <p className="mb-2" style={{ fontSize: "15px", fontWeight: 600, color: "var(--wcm-crimson)" }}>{item.title}</p>
+                <p style={{ fontSize: "13px", lineHeight: 1.6, color: "var(--wcm-text-secondary)" }}>{item.description}</p>
+              </motion.div>
+            );
+          })}
           </div>
-        </div>
+        </ParallaxFloat>
+
+        <ParallaxFloat y={yFast}>
+          <div className="text-center mt-8">
+            <VideoTrigger video={videos.whyWcm} label="Learn more about our approach" onOpen={setOpenVideo} />
+          </div>
+        </ParallaxFloat>
       </div>
+
+      {openVideo && <VideoModal video={openVideo} onClose={() => setOpenVideo(null)} />}
     </section>
   );
 }
