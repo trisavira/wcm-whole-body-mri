@@ -3,6 +3,7 @@ import { Activity } from "lucide-react";
 const links = {
   Program: [
     { label: "What is WB-MRI", href: "#what-is-wb-mri" },
+    { label: "Why Consider", href: "#why-consider" },
     { label: "Why Choose Us", href: "#why-choose-us" },
     { label: "What It Detects", href: "#body-explorer" },
     { label: "Limitations", href: "#limitations" },

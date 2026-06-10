@@ -250,8 +250,8 @@ export function BodyExplorer() {
           Whole-Body MRI looks at many areas of the body in a single visit. Select a region to zoom in and learn what may be found — in clear, patient-friendly language.
         </SectionIntro>
 
-        <div className="flex flex-col lg:flex-row gap-8 lg:gap-12 items-stretch flex-1">
-          <ParallaxFloat y={ySlow} className="lg:w-[42%] flex flex-col items-center mx-auto lg:mx-0 shrink-0">
+        <div className="flex flex-col lg:flex-row gap-8 lg:gap-12 items-center lg:items-stretch flex-1">
+          <ParallaxFloat y={ySlow} className="lg:w-[42%] flex flex-col items-center shrink-0 w-full">
             <motion.div
               initial={{ opacity: 0, x: -30 }}
               animate={inView ? { opacity: 1, x: 0 } : {}}
@@ -273,27 +273,10 @@ export function BodyExplorer() {
                 <AnatomyMap activeId={activeId} hoveredId={hoveredId} onRegionClick={handleClick} onRegionHover={setHoveredId} />
               </motion.div>
             </div>
-
-            {/* Legend buttons */}
-            <div className="mt-5 flex flex-wrap gap-2 justify-center max-w-[280px]">
-              {regions.map((r) => (
-                <motion.button key={r.id} onClick={() => handleClick(r.id)} whileTap={{ scale: 0.95 }}
-                  className="px-3 py-1 rounded-full transition-all"
-                  style={{
-                    fontSize: "11px", fontWeight: 600, cursor: "pointer",
-                    background: activeId === r.id ? r.color : "rgba(0,0,0,0.05)",
-                    color: activeId === r.id ? "#fff" : "var(--wcm-text-secondary)",
-                    border: `1px solid ${activeId === r.id ? r.color : "rgba(0,0,0,0.1)"}`,
-                  }}
-                >
-                  {r.label}
-                </motion.button>
-              ))}
-            </div>
             </motion.div>
           </ParallaxFloat>
 
-          <ParallaxFloat y={yReverse} className="flex-1 min-h-[400px] lg:min-h-[500px]">
+          <ParallaxFloat y={yReverse} className="flex-1 w-full min-h-[400px] lg:min-h-[500px]">
             <AnimatePresence mode="wait">
               {activeRegion ? (
                 <motion.div key={activeRegion.id} initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} transition={{ duration: 0.3 }}
@@ -370,7 +353,7 @@ export function BodyExplorer() {
                     />
                   </motion.div>
                   <p style={{ fontSize: "15px", color: "var(--wcm-text-secondary)", marginBottom: "6px" }}>Select a body region to explore</p>
-                  <p style={{ fontSize: "13px", color: "var(--wcm-text-secondary)" }}>Click directly on the anatomy map or use the region buttons</p>
+                  <p style={{ fontSize: "13px", color: "var(--wcm-text-secondary)" }}>Tap a highlighted area on the anatomy map to see what may be found</p>
                   <div className="mt-6 flex flex-wrap gap-2 justify-center max-w-xs">
                     {regions.map((r) => (
                       <motion.button key={r.id} onClick={() => handleClick(r.id)} whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}

@@ -28,8 +28,8 @@ export default function App() {
       <Navbar />
       <Hero />
       <WhatIsWBMRI />
-      <BodyExplorer />
       <WhyConsider />
+      <BodyExplorer />
       <WhatToExpect />
       <CTALite />
       <ReportPreview />

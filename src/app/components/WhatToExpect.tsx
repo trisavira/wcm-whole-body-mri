@@ -1,5 +1,6 @@
 import { useRef, useState } from "react";
-import { motion, useInView } from "motion/react";
+import { motion, useInView, AnimatePresence } from "motion/react";
+import { CheckCircle2 } from "lucide-react";
 import { SectionIntro } from "./SectionIntro";
 import { ParallaxFloat, ParallaxImage, ParallaxOrbs, useSectionParallax } from "./ParallaxImage";
 import { VideoModal, VideoTrigger, type VideoContent } from "./VideoModal";
@@ -10,8 +11,15 @@ const journey = [
   {
     step: "1",
     phase: "Before",
-    title: "Consultation",
-    description: "Review your health history, discuss goals, and confirm whether Whole-Body MRI is appropriate for you.",
+    title: "Consultation & preparation",
+    summary: "Meet with our team, complete forms, and prepare for your visit.",
+    bullets: [
+      "Meet with a dedicated provider to review your health history, discuss goals, and confirm whether Whole-Body MRI is right for you.",
+      "Complete registration and safety forms in advance through Weill Cornell Connect to streamline your visit.",
+      "If you have prior imaging from outside Weill Cornell Medicine, send records ahead so radiologists can compare them to your new scan.",
+      "Whole-Body MRI is a self-pay screening exam — our team explains costs in advance so there are no surprises.",
+      "Payment is typically due at the time of your appointment.",
+    ],
     image: images.consultation,
     imageAlt: "Doctor discussing health history with a patient",
     objectPosition: imageCrop.consultation,
@@ -21,7 +29,14 @@ const journey = [
     step: "2",
     phase: "During",
     title: "Your scan",
-    description: "Relax in a comfortable MRI suite. The scan typically takes about 45 minutes with no radiation.",
+    summary: "A comfortable, radiation-free exam in our state-of-the-art MRI suite.",
+    bullets: [
+      "Your scan uses wide-bore MRI technology designed for comfort during the approximately 45-minute exam.",
+      "Thousands of images are captured from your head through the middle of your thighs in a single session.",
+      "MRI uses no radiation and typically no contrast dye.",
+      "Music, TV, or movies are available in many suites to help you relax and remain still.",
+      "Our technologists guide you through each step and answer questions before and during the scan.",
+    ],
     image: images.patientInScanner,
     imageAlt: "Modern MRI scanner in a bright imaging suite",
     objectPosition: imageCrop.patientScan,
@@ -31,7 +46,15 @@ const journey = [
     step: "3",
     phase: "After",
     title: "Results & follow-up",
-    description: "Radiologists review your images. A care navigator coordinates specialist visits if anything needs attention.",
+    summary: "Expert interpretation, clear reports, and coordinated care when needed.",
+    bullets: [
+      "Your images are reviewed by a team of subspecialty radiologists who collaborate on a detailed report.",
+      "Reports are typically available within two business days through Weill Cornell Connect.",
+      "You receive a patient-friendly report with visual summaries and clear follow-up guidance when needed.",
+      "Our care team is available to answer questions and arrange a follow-up visit to review your results.",
+      "If findings need attention, we coordinate specialist referrals within Weill Cornell Medicine and NewYork-Presbyterian.",
+      "Some patients may need additional imaging or follow-up tests — we guide you through every next step.",
+    ],
     image: images.radiologyReview,
     imageAlt: "Radiologists reviewing MRI results together",
     objectPosition: imageCrop.radiology,
@@ -41,7 +64,7 @@ const journey = [
 
 export function WhatToExpect() {
   const ref = useRef<HTMLDivElement>(null);
-  const cardRef = useRef<HTMLDivElement>(null);
+  const panelRef = useRef<HTMLDivElement>(null);
   const inView = useInView(ref, { once: true, margin: "-80px" });
   const [active, setActive] = useState(0);
   const [openVideo, setOpenVideo] = useState<VideoContent | null>(null);
@@ -49,96 +72,122 @@ export function WhatToExpect() {
   const current = journey[active];
 
   return (
-    <section id="what-to-expect" ref={ref} className="relative py-24 overflow-hidden" style={{ background: "#ffffff" }}>
+    <section id="what-to-expect" ref={ref} className="relative py-24 overflow-hidden" style={{ background: "var(--wcm-bg-light)" }}>
       <ParallaxOrbs sectionRef={ref} variant="mixed" />
 
       <div className="relative max-w-7xl mx-auto px-6">
         <ParallaxFloat y={yReverse}>
           <SectionIntro eyebrow="Patient journey" title="What to expect" inView={inView}>
-            A clear path from your first conversation to receiving results — with guidance at every step.
+            From your first conversation to receiving results, our team guides you at every step — with clear communication and coordinated follow-up when needed.
           </SectionIntro>
         </ParallaxFloat>
 
         <ParallaxFloat y={ySlow}>
-          <div className="hidden md:flex items-center justify-center gap-0 mb-8 max-w-2xl mx-auto">
+          <div className="grid md:grid-cols-3 gap-3 mb-8">
             {journey.map((step, i) => (
-              <div key={step.step} className="flex items-center flex-1">
-                <button
-                  type="button"
-                  onClick={() => setActive(i)}
-                  className="flex flex-col items-center gap-2 flex-1"
-                  style={{ background: "none", border: "none", cursor: "pointer" }}
+              <motion.button
+                key={step.step}
+                type="button"
+                onClick={() => setActive(i)}
+                whileHover={{ y: -2 }}
+                whileTap={{ scale: 0.98 }}
+                className="rounded-2xl p-5 text-left transition-all"
+                style={{
+                  cursor: "pointer",
+                  background: active === i ? step.color : "#ffffff",
+                  border: `1px solid ${active === i ? step.color : "var(--wcm-border)"}`,
+                  boxShadow: active === i ? `0 12px 32px ${step.color}30` : "0 2px 8px rgba(0,0,0,0.04)",
+                }}
+              >
+                <p
+                  className="mb-1 uppercase tracking-[0.1em]"
+                  style={{
+                    fontSize: "11px",
+                    fontWeight: 700,
+                    color: active === i ? "rgba(255,255,255,0.85)" : step.color,
+                  }}
                 >
-                  <div
-                    className="w-10 h-10 rounded-full flex items-center justify-center transition-all"
-                    style={{
-                      background: active === i ? step.color : "var(--wcm-bg-light)",
-                      color: active === i ? "#fff" : "var(--wcm-text-secondary)",
-                      border: `2px solid ${active === i ? step.color : "var(--wcm-border)"}`,
-                      fontWeight: 700,
-                      fontSize: "14px",
-                    }}
-                  >
-                    {step.step}
-                  </div>
-                  <span style={{ fontSize: "12px", fontWeight: active === i ? 600 : 500, color: active === i ? step.color : "var(--wcm-text-secondary)" }}>
-                    {step.title}
-                  </span>
-                </button>
-                {i < journey.length - 1 && (
-                  <div className="h-0.5 flex-1 mx-2" style={{ background: "var(--wcm-border)", minWidth: "24px" }} />
-                )}
-              </div>
+                  {step.phase}
+                </p>
+                <p
+                  className="mb-2"
+                  style={{
+                    fontSize: "17px",
+                    fontWeight: 700,
+                    lineHeight: 1.25,
+                    color: active === i ? "#ffffff" : "var(--wcm-crimson)",
+                  }}
+                >
+                  {step.title}
+                </p>
+                <p
+                  style={{
+                    fontSize: "13px",
+                    lineHeight: 1.55,
+                    color: active === i ? "rgba(255,255,255,0.88)" : "var(--wcm-text-secondary)",
+                  }}
+                >
+                  {step.summary}
+                </p>
+              </motion.button>
             ))}
           </div>
         </ParallaxFloat>
 
         <ParallaxFloat y={yFast}>
-          <motion.div
-            ref={cardRef}
-            key={active}
-            initial={{ opacity: 0, y: 16 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.4 }}
-            className="relative rounded-2xl overflow-hidden min-h-[420px] lg:min-h-[480px]"
-            style={{ boxShadow: "0 16px 48px rgba(0,0,0,0.12)" }}
-          >
-            <ParallaxImage
-              src={current.image}
-              alt={current.imageAlt}
-              speed={0.18}
-              sectionRef={cardRef}
-              objectPosition={current.objectPosition}
-            />
-            <div className="absolute inset-0" style={{ background: "linear-gradient(to top, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.25) 55%, rgba(0,0,0,0.15) 100%)" }} />
-
-            <motion.div style={{ y: yReverse }} className="absolute bottom-0 left-0 right-0 p-8 lg:p-12 max-w-2xl">
-              <p className="mb-2" style={{ fontSize: "12px", fontWeight: 700, letterSpacing: "0.1em", color: current.color }}>
-                {current.phase.toUpperCase()}
-              </p>
-              <h3 className="mb-4" style={{ fontSize: "clamp(1.75rem, 4vw, 2.5rem)", fontWeight: 700, color: "#ffffff" }}>
-                {current.title}
-              </h3>
-              <p style={{ fontSize: "16px", lineHeight: 1.7, color: "rgba(255,255,255,0.9)" }}>
-                {current.description}
-              </p>
-              {active === 0 && (
-                <VideoTrigger video={videos.whatToExpect} label="Watch: What to expect" onOpen={setOpenVideo} light />
-              )}
-            </motion.div>
-
-            <div className="absolute top-4 right-4 flex gap-2 md:hidden">
-              {journey.map((_, i) => (
-                <button
-                  key={i}
-                  type="button"
-                  onClick={() => setActive(i)}
-                  className="w-2.5 h-2.5 rounded-full"
-                  style={{ background: active === i ? "#fff" : "rgba(255,255,255,0.4)", border: "none", cursor: "pointer" }}
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={active}
+              ref={panelRef}
+              initial={{ opacity: 0, y: 16 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -8 }}
+              transition={{ duration: 0.35 }}
+              className="grid lg:grid-cols-2 gap-0 rounded-2xl overflow-hidden min-h-[420px]"
+              style={{ border: "1px solid var(--wcm-border)", boxShadow: "0 16px 48px rgba(0,0,0,0.1)", background: "#ffffff" }}
+            >
+              <div className="relative min-h-[280px] lg:min-h-full overflow-hidden">
+                <ParallaxImage
+                  src={current.image}
+                  alt={current.imageAlt}
+                  speed={0.12}
+                  sectionRef={panelRef}
+                  objectPosition={current.objectPosition}
                 />
-              ))}
-            </div>
-          </motion.div>
+                <div
+                  className="absolute inset-0"
+                  style={{ background: "linear-gradient(to top, rgba(0,0,0,0.55), transparent 50%)" }}
+                />
+                <div className="absolute bottom-6 left-6 right-6">
+                  <p
+                    className="mb-1 uppercase tracking-[0.1em]"
+                    style={{ fontSize: "11px", fontWeight: 700, color: current.color }}
+                  >
+                    Step {current.step} · {current.phase}
+                  </p>
+                  <h3 style={{ fontSize: "clamp(1.5rem, 3vw, 2rem)", fontWeight: 700, color: "#ffffff" }}>
+                    {current.title}
+                  </h3>
+                </div>
+              </div>
+
+              <div className="flex flex-col justify-center p-8 lg:p-10">
+                <ul className="space-y-3 mb-6">
+                  {current.bullets.map((bullet) => (
+                    <li key={bullet} className="flex gap-3 items-start">
+                      <CheckCircle2 className="w-4 h-4 shrink-0 mt-0.5" style={{ color: current.color }} />
+                      <span style={{ fontSize: "14px", lineHeight: 1.65, color: "var(--wcm-text-muted)" }}>
+                        {bullet}
+                      </span>
+                    </li>
+                  ))}
+                </ul>
+                {active === 0 && (
+                  <VideoTrigger video={videos.whatToExpect} label="Watch: What to expect" onOpen={setOpenVideo} />
+                )}
+              </div>
+            </motion.div>
+          </AnimatePresence>
         </ParallaxFloat>
       </div>
 

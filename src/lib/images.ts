@@ -7,7 +7,8 @@ export function unsplashSrcSet(id: string, widths = [1280, 1920, 2560], q = 90) 
   return widths.map((w) => `${unsplash(id, w, q)} ${w}w`).join(", ");
 }
 
-const HERO_ID = "photo-1693417920099-d985b3e0fa44";
+/** Dramatic wide-angle MRI scanner — hero composition */
+const HERO_ID = "photo-1666214280352-db292c05fd80";
 
 export const images = {
   /** Hero — high-res MRI suite (2560px) */
@@ -35,10 +36,15 @@ export const images = {
   videoWhatIs: unsplash(HERO_ID, 1280, 85),
   videoWhyChoose: unsplash("photo-1666214280577-5f90bc36be92", 1280, 85),
   videoWhatToExpect: unsplash("photo-1631563018856-81be9c118283", 1280, 85),
+
+  proactiveHealth: unsplash("photo-1666214276389-393fb7dbc75c", 1920, 88),
+  wholeBodyView: unsplash("photo-1666214280352-db292c05fd80", 1920, 88),
+  peaceOfMind: unsplash("photo-1666214280577-5f90bc36be92", 1920, 88),
+  whoFor: unsplash("photo-1666214282459-c7dff167ecc0", 1920, 88),
 } as const;
 
 export const imageCrop = {
-  hero: "center 45%",
+  hero: "center 40%",
   patientScan: "center 50%",
   consultation: "center 30%",
   radiology: "center 45%",

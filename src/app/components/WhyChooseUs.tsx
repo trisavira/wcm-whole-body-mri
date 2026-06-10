@@ -19,39 +19,78 @@ export function WhyChooseUs() {
   const ref = useRef<HTMLDivElement>(null);
   const inView = useInView(ref, { once: true, margin: "-80px" });
   const [openVideo, setOpenVideo] = useState<VideoContent | null>(null);
+  const [hovered, setHovered] = useState<number | null>(null);
   const { ySlow, yFast, yReverse } = useSectionParallax(ref);
 
   return (
-    <section id="why-choose-us" ref={ref} className="relative py-24 overflow-hidden" style={{ background: "var(--wcm-bg-light)" }}>
+    <section id="why-choose-us" ref={ref} className="relative py-24 overflow-hidden" style={{ background: "#ffffff" }}>
       <ParallaxOrbs sectionRef={ref} variant="warm" />
 
       <div className="relative max-w-7xl mx-auto px-6">
         <ParallaxFloat y={yReverse}>
           <SectionIntro eyebrow="Why WCM" title="Why Weill Cornell Medicine?" inView={inView}>
-          Direct-to-consumer screening is widely available. Our program is built on academic expertise, integrated care, and responsible clinical stewardship.
+            Direct-to-consumer screening is widely available. Our program is built on academic expertise, integrated care, and responsible clinical stewardship.
           </SectionIntro>
         </ParallaxFloat>
 
         <ParallaxFloat y={ySlow}>
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
-          {differentiators.map((item, i) => {
-            const Icon = item.icon;
-            return (
-              <motion.div
-                key={item.title}
-                initial={{ opacity: 0, y: 16 }}
-                animate={inView ? { opacity: 1, y: 0 } : {}}
-                transition={{ duration: 0.4, delay: 0.08 + i * 0.05 }}
-                whileHover={{ y: -4, boxShadow: "0 12px 32px rgba(0,0,0,0.08)" }}
-                className="rounded-xl p-5 transition-shadow"
-                style={{ background: "#ffffff", border: `1px solid ${item.color}25` }}
-              >
-                <Icon className="w-8 h-8 mb-3" style={{ color: item.color }} />
-                <p className="mb-2" style={{ fontSize: "15px", fontWeight: 600, color: "var(--wcm-crimson)" }}>{item.title}</p>
-                <p style={{ fontSize: "13px", lineHeight: 1.6, color: "var(--wcm-text-secondary)" }}>{item.description}</p>
-              </motion.div>
-            );
-          })}
+            {differentiators.map((item, i) => {
+              const Icon = item.icon;
+              const isActive = hovered === i;
+              return (
+                <motion.div
+                  key={item.title}
+                  initial={{ opacity: 0, y: 16 }}
+                  animate={inView ? { opacity: 1, y: 0 } : {}}
+                  transition={{ duration: 0.4, delay: 0.08 + i * 0.05 }}
+                  onMouseEnter={() => setHovered(i)}
+                  onMouseLeave={() => setHovered(null)}
+                  onClick={() => setHovered(isActive ? null : i)}
+                  onFocus={() => setHovered(i)}
+                  onBlur={() => setHovered(null)}
+                  className="rounded-xl p-6 min-h-[140px] transition-all duration-300 cursor-pointer"
+                  style={{
+                    background: isActive ? item.color : "#ffffff",
+                    border: `1px solid ${isActive ? item.color : `${item.color}25`}`,
+                    boxShadow: isActive ? `0 16px 40px ${item.color}35` : "none",
+                    transform: isActive ? "translateY(-4px)" : "translateY(0)",
+                  }}
+                >
+                  <Icon
+                    className="w-8 h-8 mb-4 transition-colors duration-300"
+                    style={{ color: isActive ? "#ffffff" : item.color }}
+                  />
+                  <p
+                    className="mb-2 transition-colors duration-300"
+                    style={{
+                      fontSize: "15px",
+                      fontWeight: 600,
+                      color: isActive ? "#ffffff" : "var(--wcm-crimson)",
+                    }}
+                  >
+                    {item.title}
+                  </p>
+                  <motion.p
+                    initial={false}
+                    animate={{
+                      opacity: isActive ? 1 : 0,
+                      height: isActive ? "auto" : 0,
+                      marginTop: isActive ? 0 : 0,
+                    }}
+                    transition={{ duration: 0.25 }}
+                    style={{
+                      fontSize: "13px",
+                      lineHeight: 1.6,
+                      color: isActive ? "rgba(255,255,255,0.92)" : "var(--wcm-text-secondary)",
+                      overflow: "hidden",
+                    }}
+                  >
+                    {item.description}
+                  </motion.p>
+                </motion.div>
+              );
+            })}
           </div>
         </ParallaxFloat>
 
