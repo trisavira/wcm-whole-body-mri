@@ -12,7 +12,6 @@ import { ReportPreview } from "./components/ReportPreview";
 import { Testimonials } from "./components/Testimonials";
 import { VideoSection } from "./components/VideoSection";
 import { FAQ } from "./components/FAQ";
-import { FutureProgram } from "./components/FutureProgram";
 import { CTASection } from "./components/CTASection";
 import { Footer } from "./components/Footer";
 import { useSectionTracking } from "./hooks/useSectionTracking";
@@ -44,7 +43,6 @@ export default function App() {
       <Testimonials />
       <VideoSection />
       <FAQ />
-      <FutureProgram />
       <CTASection />
       <Footer />
     </div>
