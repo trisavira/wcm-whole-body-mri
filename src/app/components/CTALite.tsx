@@ -12,7 +12,7 @@ export function CTALite() {
   const { ySlow, yFast } = useSectionParallax(ref);
 
   return (
-    <section id="contact-lite" ref={ref} className="relative py-20 mt-16 overflow-hidden" style={{ borderTop: "1px solid var(--wcm-border)" }}>
+    <section id="contact-lite" ref={ref} className="relative py-24 mt-20 overflow-hidden" style={{ borderTop: "1px solid var(--wcm-border)" }}>
       <ParallaxImage
         src={images.mriSuite}
         alt="Comfortable MRI suite at Weill Cornell Medicine"

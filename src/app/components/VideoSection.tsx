@@ -46,7 +46,7 @@ export function VideoSection() {
   return (
     <section id="videos" ref={ref} className="relative py-20 overflow-hidden" style={{ background: "#ffffff" }}>
       <div className="relative max-w-7xl mx-auto px-6">
-        <SectionIntro title="Watch & learn" inView={inView}>
+        <SectionIntro eyebrow="Video library" title="Watch & learn" inView={inView}>
           Short videos from our clinical team covering what Whole-Body MRI is, why patients choose Weill Cornell Medicine, and what to expect from consultation through results.
         </SectionIntro>
 

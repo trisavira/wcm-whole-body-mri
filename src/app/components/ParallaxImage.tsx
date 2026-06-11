@@ -74,8 +74,8 @@ export function ParallaxImage({
         loading={priority ? "eager" : "lazy"}
         fetchPriority={priority ? "high" : "auto"}
         decoding={priority ? "sync" : "async"}
-        style={{ y, scale: imageScale, objectPosition }}
         className="w-full h-[115%] object-cover"
+        style={{ y, scale: imageScale, objectPosition, filter: "saturate(0.96) contrast(1.04)" }}
         draggable={false}
       />
     </div>

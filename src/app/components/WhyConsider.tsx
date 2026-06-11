@@ -51,7 +51,7 @@ export function WhyConsider() {
   return (
     <section id="why-consider" ref={ref} className="relative py-24 overflow-hidden" style={{ background: "#ffffff" }}>
       <div className="relative max-w-7xl mx-auto px-6">
-        <SectionIntro eyebrow="Why consider it" title="Why consider Whole-Body MRI?" inView={inView}>
+        <SectionIntro eyebrow="Why consider it" title="Why consider it?" inView={inView}>
           Patients often choose Whole-Body MRI to stay informed about their health — as a complement to routine care, not a replacement for it.
         </SectionIntro>
 

@@ -4,12 +4,13 @@ import { Menu, X } from "lucide-react";
 import { Button } from "./ui/button";
 import { trackCTA } from "../../lib/analytics";
 
+/** Nav order follows BRD §8.1 information architecture */
 const navLinks = [
   { label: "What is WB-MRI", href: "#what-is-wb-mri" },
-  { label: "What It Detects", href: "#body-explorer" },
   { label: "Why Consider", href: "#why-consider" },
-  { label: "What to Expect", href: "#what-to-expect" },
   { label: "Why WCM", href: "#why-choose-us" },
+  { label: "What We Evaluate", href: "#body-explorer" },
+  { label: "What to Expect", href: "#what-to-expect" },
   { label: "FAQ", href: "#faq" },
 ];
 

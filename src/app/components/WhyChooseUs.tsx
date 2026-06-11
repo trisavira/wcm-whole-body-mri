@@ -28,10 +28,14 @@ export function WhyChooseUs() {
 
       <div className="relative max-w-7xl mx-auto px-6">
         <ParallaxFloat y={yReverse}>
-          <SectionIntro eyebrow="Why WCM" title="Why Weill Cornell Medicine?" inView={inView}>
+          <SectionIntro eyebrow="Why choose us" title="Why Weill Cornell Medicine?" inView={inView}>
             Direct-to-consumer screening is widely available. Our program is built on academic expertise, integrated care, and responsible clinical stewardship.
           </SectionIntro>
         </ParallaxFloat>
+
+        <p className="text-center mb-6" style={{ fontSize: "13px", color: "var(--wcm-text-secondary)" }}>
+          Hover or tap a card to learn more about each differentiator.
+        </p>
 
         <ParallaxFloat y={ySlow}>
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -43,24 +47,26 @@ export function WhyChooseUs() {
                   key={item.title}
                   initial={{ opacity: 0, y: 16 }}
                   animate={inView ? { opacity: 1, y: 0 } : {}}
-                  transition={{ duration: 0.4, delay: 0.08 + i * 0.05 }}
+                  whileHover={{ y: -6, scale: 1.02 }}
+                  transition={{ duration: 0.35, delay: 0.08 + i * 0.05 }}
                   onMouseEnter={() => setHovered(i)}
                   onMouseLeave={() => setHovered(null)}
                   onClick={() => setHovered(isActive ? null : i)}
                   onFocus={() => setHovered(i)}
                   onBlur={() => setHovered(null)}
-                  className="rounded-xl p-6 min-h-[140px] transition-all duration-300 cursor-pointer"
+                  className="rounded-xl p-6 min-h-[120px] cursor-pointer"
                   style={{
                     background: isActive ? item.color : "#ffffff",
                     border: `1px solid ${isActive ? item.color : `${item.color}25`}`,
-                    boxShadow: isActive ? `0 16px 40px ${item.color}35` : "none",
-                    transform: isActive ? "translateY(-4px)" : "translateY(0)",
+                    boxShadow: isActive ? `0 20px 48px ${item.color}40` : "0 2px 12px rgba(0,0,0,0.04)",
                   }}
                 >
-                  <Icon
-                    className="w-8 h-8 mb-4 transition-colors duration-300"
-                    style={{ color: isActive ? "#ffffff" : item.color }}
-                  />
+                  <motion.div animate={{ scale: isActive ? 1.1 : 1 }} transition={{ duration: 0.25 }}>
+                    <Icon
+                      className="w-8 h-8 mb-4 transition-colors duration-300"
+                      style={{ color: isActive ? "#ffffff" : item.color }}
+                    />
+                  </motion.div>
                   <p
                     className="mb-2 transition-colors duration-300"
                     style={{

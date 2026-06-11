@@ -5,8 +5,8 @@ const links = {
     { label: "What is WB-MRI", href: "#what-is-wb-mri" },
     { label: "Why Consider", href: "#why-consider" },
     { label: "Why Choose Us", href: "#why-choose-us" },
-    { label: "What It Detects", href: "#body-explorer" },
-    { label: "Limitations", href: "#limitations" },
+    { label: "What We Evaluate", href: "#body-explorer" },
+    { label: "What It Does Not Replace", href: "#limitations" },
     { label: "What to Expect", href: "#what-to-expect" },
   ],
   Resources: [

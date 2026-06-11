@@ -4,26 +4,39 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "./
 import { SectionIntro } from "./SectionIntro";
 import { ParallaxFloat, ParallaxOrbs, useSectionParallax } from "./ParallaxImage";
 
+/** Addresses BRD §5 audience concerns */
 const faqs = [
   {
-    q: "Is Whole-Body MRI legitimate?",
-    a: "Yes. Whole-Body MRI is established medical technology offered within an academic medical center with subspecialty radiologist oversight — not a commercial screening franchise. Our program follows evidence-informed protocols and responsible clinical stewardship.",
+    q: "Is Whole-Body MRI legitimate or overhyped?",
+    a: "Whole-Body MRI is established medical technology offered within an academic medical center with subspecialty radiologist oversight — not a commercial screening franchise. Our program follows evidence-informed protocols and responsible clinical stewardship.",
+  },
+  {
+    q: "Why should I consider Whole-Body MRI?",
+    a: "Many patients choose it to stay informed about their health — often before symptoms develop. It offers a broad, radiation-free view of the body in one visit. A consultation helps determine whether it aligns with your goals and health history.",
+  },
+  {
+    q: "Why choose Weill Cornell Medicine over direct-to-consumer options?",
+    a: "Our program is delivered within a leading academic health system with subspecialty radiologist interpretation, patient-friendly reporting, and coordinated specialist follow-up within Weill Cornell Medicine and NewYork-Presbyterian — not a standalone screening center.",
   },
   {
     q: "What does it detect?",
     a: "Whole-Body MRI may identify certain tumors, vascular abnormalities, inflammatory conditions, and musculoskeletal findings across multiple body regions. It cannot detect every disease — some conditions are too small, too early, or not visible on MRI. Your consultation will cover what is and is not appropriate for your situation.",
   },
   {
-    q: "Does it replace cancer screenings?",
-    a: "No. Whole-Body MRI is complementary, not a substitute. Continue all guideline-recommended screenings — including mammography, colonoscopy, cervical screening, and others — with your primary care physician.",
-  },
-  {
     q: "What if something is found?",
     a: "All studies are reviewed by board-certified subspecialty radiologists. If a finding needs attention, our care navigators coordinate specialist follow-up within Weill Cornell Medicine. We prioritize clear communication and avoid unnecessary alarm.",
   },
   {
-    q: "How much does it cost?",
-    a: "Whole-Body MRI is currently offered as a self-pay service. Pricing and payment options are discussed transparently during your consultation — there are no hidden fees.",
+    q: "Is it worth the cost?",
+    a: "Whole-Body MRI is currently offered as a self-pay service. Pricing and payment options are discussed transparently during your consultation — there are no hidden fees. Many patients value the peace of mind and integrated academic care pathway.",
+  },
+  {
+    q: "Does it replace cancer screenings?",
+    a: "No. Whole-Body MRI is complementary, not a substitute. Continue all guideline-recommended screenings — including mammography, colonoscopy, cervical screening, and others — with your primary care physician.",
+  },
+  {
+    q: "Will this create anxiety or unnecessary testing?",
+    a: "Our team emphasizes responsible clinical positioning. Findings are explained in plain language with context. Not every finding requires action — your care team helps distinguish what needs follow-up from what is common and benign, avoiding unnecessary testing when possible.",
   },
 ];
 

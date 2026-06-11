@@ -77,7 +77,7 @@ export function WhatToExpect() {
 
       <div className="relative max-w-7xl mx-auto px-6">
         <ParallaxFloat y={yReverse}>
-          <SectionIntro eyebrow="Patient journey" title="What to expect" inView={inView}>
+          <SectionIntro eyebrow="Patient journey" title="What to expect on your visit" inView={inView}>
             From your first conversation to receiving results, our team guides you at every step — with clear communication and coordinated follow-up when needed.
           </SectionIntro>
         </ParallaxFloat>

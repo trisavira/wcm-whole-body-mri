@@ -54,15 +54,33 @@ export function CTASection() {
                   );
                 })}
               </div>
-              <div className="flex flex-wrap gap-4">
-                <div className="flex items-center gap-2">
+              <div className="flex flex-wrap gap-4 mb-6">
+                <a href="tel:+16469629553" className="flex items-center gap-2" style={{ textDecoration: "none" }} onClick={() => trackCTA("contact_team", "contact")}>
                   <Phone className="w-4 h-4" style={{ color: "#FFC72C" }} />
                   <span style={{ fontSize: "14px", color: "rgba(255,255,255,0.9)" }}>(646) 962-9553</span>
-                </div>
+                </a>
                 <div className="flex items-center gap-2">
                   <MapPin className="w-4 h-4" style={{ color: "#FFC72C" }} />
                   <span style={{ fontSize: "14px", color: "rgba(255,255,255,0.9)" }}>1300 York Ave, New York</span>
                 </div>
+              </div>
+              <div className="flex flex-wrap gap-4">
+                <a
+                  href="#contact"
+                  className="text-sm font-semibold underline-offset-2 hover:underline"
+                  style={{ color: "#FFC72C" }}
+                  onClick={() => trackCTA("request_appointment", "contact")}
+                >
+                  Request appointment
+                </a>
+                <a
+                  href="tel:+16469629553"
+                  className="text-sm font-semibold underline-offset-2 hover:underline"
+                  style={{ color: "rgba(255,255,255,0.85)" }}
+                  onClick={() => trackCTA("contact_team", "contact_links")}
+                >
+                  Contact our team
+                </a>
               </div>
             </motion.div>
           </ParallaxFloat>

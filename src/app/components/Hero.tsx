@@ -18,24 +18,24 @@ export function Hero() {
         src={images.heroBackground}
         srcSet={images.heroBackgroundSrcSet}
         sizes="100vw"
-        alt="State-of-the-art MRI scanner in a modern clinical imaging suite"
-        speed={0.18}
+        alt="Bright, modern MRI imaging suite at Weill Cornell Medicine"
+        speed={0.12}
         sectionRef={containerRef}
         offset={["start start", "end start"]}
         objectPosition={imageCrop.hero}
-        imageScale={1.08}
+        imageScale={1.02}
         priority
       />
       <div
         className="absolute inset-0"
         style={{
           background:
-            "linear-gradient(to top, rgba(8,8,10,0.95) 0%, rgba(8,8,10,0.72) 42%, rgba(8,8,10,0.45) 100%)",
+            "linear-gradient(to top, rgba(8,8,10,0.92) 0%, rgba(8,8,10,0.62) 48%, rgba(8,8,10,0.35) 100%)",
         }}
       />
       <div
         className="absolute inset-0 pointer-events-none"
-        style={{ background: "radial-gradient(ellipse 80% 60% at 20% 80%, rgba(179,27,27,0.18), transparent 70%)" }}
+        style={{ background: "radial-gradient(ellipse 70% 50% at 15% 85%, rgba(179,27,27,0.12), transparent 65%)" }}
       />
 
       <motion.div
@@ -81,14 +81,29 @@ export function Hero() {
             textShadow: "0 1px 12px rgba(0,0,0,0.35)",
           }}
         >
-          Radiation-free whole-body imaging interpreted by subspecialty radiologists — with integrated follow-up care when you need it.
+          Science-based prevention and early detection within a leading academic medical center — radiation-free imaging with subspecialty radiologist review and coordinated follow-up.
         </motion.p>
 
-        <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.25 }}>
+        <motion.div
+          initial={{ opacity: 0, y: 16 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.25 }}
+          className="flex flex-wrap items-center gap-3"
+        >
           <Button size="lg" className="border-0 text-white group px-8 h-12 rounded-full" style={{ background: "#cf4520" }} asChild>
             <a href="#contact" onClick={() => trackCTA("request_consultation", "hero")}>
               Request a Consultation
               <ArrowRight className="ml-2 w-4 h-4 group-hover:translate-x-1 transition-transform" />
+            </a>
+          </Button>
+          <Button
+            size="lg"
+            variant="outline"
+            className="h-12 rounded-full px-8 !bg-transparent !text-white border-white/60 hover:!bg-white/15 hover:!text-white"
+            asChild
+          >
+            <a href="#what-is-wb-mri" onClick={() => trackCTA("learn_more", "hero")}>
+              Learn more
             </a>
           </Button>
         </motion.div>
