@@ -59,13 +59,11 @@ export function Hero() {
           className="wcm-hero-title mb-5"
           style={{
             color: "#ffffff",
-            textShadow: "0 1px 16px rgba(0,0,0,0.35)",
+            textShadow: "0 1px 12px rgba(0,0,0,0.3)",
           }}
         >
-          <span className="block whitespace-nowrap text-[clamp(13px,3.8vw,2.75rem)] tracking-tight">
-            Whole Body MRI Early Detection.
-          </span>
-          <span className="block">Greater Peace of Mind.</span>
+          <span className="wcm-hero-title__primary">Whole Body MRI Early Detection.</span>
+          <span className="wcm-hero-title__secondary">Greater Peace of Mind.</span>
         </motion.h1>
 
         <motion.p
