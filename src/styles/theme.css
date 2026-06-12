@@ -127,6 +127,14 @@
 
   body {
     @apply bg-background text-foreground;
+    font-family: 'Open Sans', Helvetica, Arial, sans-serif;
+  }
+
+  button,
+  input,
+  textarea,
+  select {
+    font-family: inherit;
   }
 
   html {

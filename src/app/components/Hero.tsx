@@ -46,37 +46,34 @@ export function Hero() {
           initial={{ opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1 }}
-          className="mb-4 uppercase tracking-[0.14em]"
-          style={{ fontSize: "11px", fontWeight: 600, color: "#FFC72C" }}
+          className="wcm-eyebrow mb-4"
+          style={{ color: "#FFC72C" }}
         >
           Weill Cornell Medicine · Early Detection & Prevention
         </motion.p>
 
         <motion.h1
-          initial={{ opacity: 0, y: 28 }}
+          initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.7 }}
-          className="mb-6 max-w-4xl leading-[1.08]"
+          className="wcm-hero-title mb-5"
           style={{
-            fontSize: "clamp(2.5rem, 6.5vw, 4.5rem)",
-            fontWeight: 700,
             color: "#ffffff",
-            textShadow: "0 2px 24px rgba(0,0,0,0.45)",
+            textShadow: "0 1px 16px rgba(0,0,0,0.35)",
           }}
         >
-          Whole Body MRI Early Detection.
-          <br />
-          <span style={{ color: "rgba(255,255,255,0.92)" }}>Greater Peace of Mind.</span>
+          <span className="block whitespace-nowrap text-[clamp(13px,3.8vw,2.75rem)] tracking-tight">
+            Whole Body MRI Early Detection.
+          </span>
+          <span className="block">Greater Peace of Mind.</span>
         </motion.h1>
 
         <motion.p
           initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.15 }}
-          className="mb-10 max-w-xl"
+          className="wcm-lead mb-10 max-w-xl"
           style={{
-            fontSize: "17px",
-            lineHeight: 1.65,
             color: "rgba(255,255,255,0.92)",
             textShadow: "0 1px 12px rgba(0,0,0,0.35)",
           }}

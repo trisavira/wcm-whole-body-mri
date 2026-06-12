@@ -18,8 +18,14 @@ export function Limitations() {
 
   return (
     <section id="limitations" ref={ref} className="relative py-20 overflow-hidden" style={{ background: "var(--wcm-bg-light)" }}>
-      <div className="relative max-w-3xl mx-auto px-6">
-        <SectionIntro eyebrow="Alongside your regular care" title="Your routine screenings are not replaced" inView={inView}>
+      <div className="relative max-w-4xl mx-auto px-6">
+        <SectionIntro
+          eyebrow="Alongside your regular care"
+          title="Your routine screenings are not replaced"
+          inView={inView}
+          className="max-w-none"
+          titleClassName="whitespace-nowrap tracking-tight"
+        >
           Whole-Body MRI complements — not substitutes — guideline-recommended screenings. Continue all age-appropriate tests with your primary care physician.
         </SectionIntro>
 
@@ -41,7 +47,7 @@ export function Limitations() {
             <AlertTriangle className="w-6 h-6" style={{ color: "#cf4520" }} />
           </div>
 
-          <p className="mb-6 max-w-lg mx-auto" style={{ fontSize: "15px", lineHeight: 1.7, color: "var(--wcm-text-muted)" }}>
+          <p className="wcm-body-text mb-6 max-w-lg mx-auto" style={{ color: "var(--wcm-text-muted)" }}>
             This program is designed to add context to your health picture — not replace proven screening tools your doctor recommends.
           </p>
 
@@ -49,9 +55,8 @@ export function Limitations() {
             {notReplaced.map((item) => (
               <span
                 key={item}
-                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full"
+                className="wcm-caption inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full"
                 style={{
-                  fontSize: "12px",
                   fontWeight: 600,
                   background: "#ffffff",
                   color: "var(--wcm-text-muted)",
