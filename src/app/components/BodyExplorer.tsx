@@ -1,10 +1,20 @@
 import { useState, useRef } from "react";
 import { motion, AnimatePresence, useInView } from "motion/react";
 import { ChevronRight, CheckCircle2, X, Info } from "lucide-react";
-import bodyAnatomyImage from "../../assets/body-anatomy.jpg";
 import { trackBodyRegion } from "../../lib/analytics";
 import { SectionIntro } from "./SectionIntro";
 import { ParallaxFloat, ParallaxOrbs, useSectionParallax } from "./ParallaxImage";
+import {
+  BODY_MAP_VIEWBOX,
+  LABEL_LEADER_END_LEFT,
+  LABEL_LEADER_END_RIGHT,
+  limbsBasePath,
+  regionZoom,
+  schematicRegions,
+  schematicTheme,
+  torsoPaintOrder,
+  torsoShellPath,
+} from "./bodyAnatomyMap";
 type Region = {
   id: string;
   label: string;
@@ -54,58 +64,6 @@ const regions: Region[] = [
   },
 ];
 
-const regionZoom: Record<string, { scale: number; originY: string }> = {
-  brain: { scale: 2.8, originY: "12%" },
-  chest: { scale: 2.4, originY: "32%" },
-  abdomen: { scale: 2.4, originY: "52%" },
-  spine: { scale: 3, originY: "42%" },
-  pelvis: { scale: 2.4, originY: "68%" },
-  extremities: { scale: 1.9, originY: "50%" },
-};
-
-// ── Realistic anatomy map with interactive hotspots ──
-type AnatomyHotspot = {
-  id: string;
-  d: string;
-  labelX: number;
-  labelY: number;
-  pulseX: number;
-  pulseY: number;
-};
-
-const anatomyHotspots: AnatomyHotspot[] = [
-  {
-    id: "brain",
-    d: "M 44,3 C 38,3 34,7 34,11 C 33,15 36,18 40,19 L 54,19 C 58,18 61,15 60,11 C 60,7 56,3 50,3 Z M 40,19 L 39,24 L 55,24 L 54,19 Z",
-    labelX: 68, labelY: 10, pulseX: 47, pulseY: 11,
-  },
-  {
-    id: "chest",
-    d: "M 34,24 C 28,28 27,38 30,46 L 34,52 L 60,52 L 64,46 C 67,38 66,28 60,24 C 55,22 39,22 34,24 Z",
-    labelX: 72, labelY: 36, pulseX: 47, pulseY: 38,
-  },
-  {
-    id: "abdomen",
-    d: "M 34,52 L 32,64 C 33,70 38,74 47,75 L 53,75 C 62,74 67,70 68,64 L 66,52 Z",
-    labelX: 72, labelY: 62, pulseX: 47, pulseY: 64,
-  },
-  {
-    id: "spine",
-    d: "M 45.5,24 L 48.5,24 L 49,74 L 46,74 Z",
-    labelX: 58, labelY: 48, pulseX: 47.5, pulseY: 48,
-  },
-  {
-    id: "pelvis",
-    d: "M 32,64 C 31,70 34,78 40,81 L 54,81 C 60,78 63,70 62,64 L 53,75 L 47,75 Z",
-    labelX: 70, labelY: 74, pulseX: 47, pulseY: 76,
-  },
-  {
-    id: "extremities",
-    d: "M 34,24 L 10,36 L 8,50 L 22,46 L 30,32 Z M 60,24 L 72,30 L 70,58 L 62,56 L 60,32 Z M 40,81 L 36,120 L 44,122 L 48,81 Z M 54,81 L 58,122 L 50,120 L 54,81 Z M 36,120 L 34,132 L 42,132 L 44,122 Z M 50,120 L 58,132 L 60,120 Z",
-    labelX: 12, labelY: 42, pulseX: 22, pulseY: 44,
-  },
-];
-
 type AnatomyMapProps = {
   activeId: string | null;
   hoveredId: string | null;
@@ -113,112 +71,196 @@ type AnatomyMapProps = {
   onRegionHover: (id: string | null) => void;
 };
 
-function AnatomyMap({ activeId, hoveredId, onRegionClick, onRegionHover }: AnatomyMapProps) {
+function BodyMapFigure({
+  activeId,
+  hoveredId,
+  onRegionClick,
+  onRegionHover,
+  className = "",
+}: AnatomyMapProps & { className?: string }) {
   const isLit = (id: string) => activeId === id || hoveredId === id;
 
   return (
-    <div className="relative w-[280px] overflow-hidden rounded-xl" style={{ aspectRatio: "600 / 833" }}>
-      <img
-        src={bodyAnatomyImage}
-        alt="Human muscular and skeletal anatomy — anterior view"
-        className="w-full h-full object-cover object-center"
-        style={{
-          filter: activeId ? "none" : "saturate(0.85) contrast(1.05)",
-          transform: "scale(1.06)",
-          transformOrigin: "center center",
-        }}
-        draggable={false}
+    <svg
+      viewBox={BODY_MAP_VIEWBOX}
+      preserveAspectRatio="xMidYMid meet"
+      className={className}
+      role="img"
+      aria-label="Schematic body map — tap a region to explore"
+      style={{ overflow: "hidden" }}
+    >
+      <rect x="0" y="0" width="110" height="139" fill={schematicTheme.bg} rx="4" />
+
+      {/* Torso outline */}
+      <path
+        d={torsoShellPath}
+        fill={schematicTheme.shellFill}
+        stroke={schematicTheme.shellStroke}
+        strokeWidth="0.4"
+        pointerEvents="none"
       />
 
-      {/* MRI scan line */}
-      <motion.div
-        className="absolute left-2 right-2 h-px pointer-events-none z-10"
-        style={{ background: "linear-gradient(to right, transparent, rgba(231,117,29,0.8), transparent)", boxShadow: "0 0 8px 2px rgba(231,117,29,0.2)" }}
-        animate={{ top: ["8%", "92%", "8%"] }}
-        transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
+      {/* Limbs — single clean layer */}
+      <path
+        d={limbsBasePath}
+        fill={schematicTheme.regionFill}
+        stroke={schematicTheme.regionStroke}
+        strokeWidth="0.35"
+        strokeLinejoin="round"
+        pointerEvents="none"
       />
 
-      <svg
-        viewBox="0 0 100 139"
-        className="absolute inset-0 w-full h-full"
-        style={{ overflow: "visible" }}
-      >
-        {anatomyHotspots.map((spot) => {
-          const region = regions.find((r) => r.id === spot.id)!;
-          const lit = isLit(spot.id);
-          return (
-            <g
-              key={spot.id}
-              style={{ cursor: "pointer" }}
-              onClick={() => onRegionClick(spot.id)}
-              onMouseEnter={() => onRegionHover(spot.id)}
-              onMouseLeave={() => onRegionHover(null)}
-            >
-              <path
-                d={spot.d}
-                fill={lit ? region.color : "transparent"}
-                fillOpacity={lit ? (activeId === spot.id ? 0.42 : 0.28) : 0}
-                stroke={lit ? region.color : "transparent"}
-                strokeWidth={lit ? 0.6 : 0}
-                strokeOpacity={lit ? 0.9 : 0}
-                style={{ transition: "fill 0.25s, fill-opacity 0.25s, stroke 0.25s" }}
-              />
-              {activeId === spot.id && (
-                <motion.circle
-                  cx={spot.pulseX}
-                  cy={spot.pulseY}
-                  r="6"
-                  fill="none"
-                  stroke={region.color}
-                  strokeWidth="0.5"
-                  animate={{ r: [6, 12, 6], opacity: [0.7, 0, 0.7] }}
-                  transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
-                />
-              )}
-            </g>
-          );
-        })}
+      {/* Torso section fills */}
+      {torsoPaintOrder.map((id) => {
+        const spot = schematicRegions.find((s) => s.id === id)!;
+        return (
+          <path
+            key={`base-${id}`}
+            d={spot.d}
+            fill={schematicTheme.regionFill}
+            stroke={schematicTheme.regionStroke}
+            strokeWidth="0.35"
+            strokeLinejoin="round"
+            pointerEvents="none"
+          />
+        );
+      })}
 
-        {/* Region labels */}
-        {anatomyHotspots.map((spot) => {
-          const region = regions.find((r) => r.id === spot.id)!;
-          const lit = isLit(spot.id);
-          if (!lit) return null;
-          return (
-            <g key={`label-${spot.id}`} style={{ pointerEvents: "none" }}>
-              <line
-                x1={spot.pulseX + (spot.labelX > spot.pulseX ? 4 : -4)}
-                y1={spot.pulseY}
-                x2={spot.labelX - (spot.labelX > spot.pulseX ? 2 : -2)}
-                y2={spot.labelY}
+      {/* Section dividers — aligned to torso regions */}
+      <line x1="41" y1="41" x2="69" y2="41" stroke={schematicTheme.dividerStroke} strokeWidth="0.35" pointerEvents="none" />
+      <line x1="41" y1="57" x2="69" y2="57" stroke={schematicTheme.dividerStroke} strokeWidth="0.35" pointerEvents="none" />
+
+      {/* Spine — dashed scan line only (no duplicate label) */}
+      <line
+        x1="55"
+        y1="22"
+        x2="55"
+        y2="73"
+        stroke={schematicTheme.spineLine}
+        strokeWidth="0.5"
+        strokeDasharray="2.5 2"
+        strokeOpacity="0.8"
+        pointerEvents="none"
+      />
+
+      {/* Wrist markers */}
+      <circle cx="30" cy="55" r="2" fill={schematicTheme.jointFill} stroke={schematicTheme.jointStroke} strokeWidth="0.3" pointerEvents="none" />
+      <circle cx="80" cy="55" r="2" fill={schematicTheme.jointFill} stroke={schematicTheme.jointStroke} strokeWidth="0.3" pointerEvents="none" />
+
+      {/* Interactive regions */}
+      {schematicRegions.map((spot) => {
+        const region = regions.find((r) => r.id === spot.id)!;
+        const lit = isLit(spot.id);
+        const selected = activeId === spot.id;
+        return (
+          <g
+            key={spot.id}
+            style={{ cursor: "pointer" }}
+            onClick={() => onRegionClick(spot.id)}
+            onMouseEnter={() => onRegionHover(spot.id)}
+            onMouseLeave={() => onRegionHover(null)}
+          >
+            <path
+              d={spot.d}
+              fill={lit ? region.color : "transparent"}
+              fillOpacity={lit ? (selected ? 0.45 : 0.28) : 0}
+              stroke={lit ? region.color : "transparent"}
+              strokeWidth={lit ? 0.55 : 0}
+              strokeOpacity={lit ? 0.95 : 0}
+              style={{ transition: "fill 0.25s, fill-opacity 0.25s, stroke 0.25s" }}
+            />
+            {selected && (
+              <motion.circle
+                cx={spot.pulseX}
+                cy={spot.pulseY}
+                r="5"
+                fill="none"
                 stroke={region.color}
-                strokeWidth="0.4"
-                strokeOpacity="0.7"
+                strokeWidth="0.5"
+                animate={{ r: [5, 10, 5], opacity: [0.8, 0, 0.8] }}
+                transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
               />
-              <rect
-                x={spot.labelX - (spot.id === "extremities" ? 14 : 10)}
-                y={spot.labelY - 4}
-                width={spot.id === "extremities" ? 28 : 20}
-                height="6"
-                rx="1.5"
-                fill={region.color}
-                fillOpacity="0.92"
-              />
-              <text
-                x={spot.labelX}
-                y={spot.labelY}
-                textAnchor="middle"
-                fontSize="3.2"
-                fontWeight="700"
-                fill="white"
-                style={{ fontFamily: "'Open Sans', sans-serif" }}
-              >
-                {region.label.split(" ")[0]}
-              </text>
-            </g>
-          );
-        })}
-      </svg>
+            )}
+          </g>
+        );
+      })}
+
+      {/* Region callouts — torso + brain only; spine/limbs use chips */}
+      {schematicRegions.map((spot) => {
+        const region = regions.find((r) => r.id === spot.id)!;
+        const lit = isLit(spot.id);
+        if (!spot.showLabel) return null;
+
+        const labelColor = lit ? region.color : schematicTheme.labelMuted;
+        const isRight = spot.labelSide === "right";
+        const lineEndX = isRight ? LABEL_LEADER_END_RIGHT : LABEL_LEADER_END_LEFT;
+
+        return (
+          <g key={`label-${spot.id}`} style={{ pointerEvents: "none" }}>
+            <line
+              x1={spot.leaderStart.x}
+              y1={spot.leaderStart.y}
+              x2={lineEndX}
+              y2={spot.labelY}
+              stroke={lit ? region.color : schematicTheme.leaderMuted}
+              strokeWidth="0.3"
+            />
+            <text
+              x={spot.labelX}
+              y={spot.labelY}
+              textAnchor={isRight ? "end" : "start"}
+              dominantBaseline="middle"
+              fontSize="3.8"
+              fontWeight={lit ? "700" : "600"}
+              fill={labelColor}
+              style={{ fontFamily: "'Open Sans', sans-serif" }}
+            >
+              {spot.labelShort}
+            </text>
+          </g>
+        );
+      })}
+    </svg>
+  );
+}
+
+type AnatomyMapZoom = { scale: number; originY: string };
+
+function AnatomyMap({
+  activeId,
+  hoveredId,
+  onRegionClick,
+  onRegionHover,
+  zoom = { scale: 1, originY: "50%" },
+}: AnatomyMapProps & { zoom?: AnatomyMapZoom }) {
+  return (
+    <div
+      className="relative w-full mx-auto overflow-hidden rounded-lg isolate"
+      style={{ aspectRatio: "110 / 139", maxWidth: "340px" }}
+    >
+      <motion.div
+        className="w-full h-full will-change-transform"
+        animate={{ scale: zoom.scale }}
+        transition={{ type: "spring", stiffness: 90, damping: 20 }}
+        style={{ transformOrigin: `50% ${zoom.originY}` }}
+      >
+        <motion.div
+          className="absolute left-[22%] right-[22%] h-px pointer-events-none z-10"
+          style={{
+            background: `linear-gradient(to right, transparent, ${schematicTheme.scanLine}, transparent)`,
+            boxShadow: "0 0 10px 2px rgba(231,117,29,0.2)",
+          }}
+          animate={{ top: ["10%", "88%", "10%"] }}
+          transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
+        />
+        <BodyMapFigure
+          activeId={activeId}
+          hoveredId={hoveredId}
+          onRegionClick={onRegionClick}
+          onRegionHover={onRegionHover}
+          className="w-full h-full block"
+        />
+      </motion.div>
     </div>
   );
 }
@@ -250,37 +292,73 @@ export function BodyExplorer() {
           Whole-Body MRI looks at many areas of the body in a single visit. Select a region to zoom in and learn what may be found — in clear, patient-friendly language.
         </SectionIntro>
 
-        <div className="grid lg:grid-cols-[minmax(0,380px)_1fr] gap-8 lg:gap-10 items-start flex-1">
-          <ParallaxFloat y={ySlow} className="flex flex-col items-center w-full mx-auto lg:mx-0 max-w-[380px]">
+        <div className="grid lg:grid-cols-[minmax(0,380px)_1fr] lg:grid-rows-[auto_minmax(0,1fr)] gap-x-8 lg:gap-x-10 gap-y-4 items-start flex-1">
+          <div className="flex items-center gap-2 px-3 py-1.5 rounded-full w-fit mx-auto lg:mx-0" style={{ background: "rgba(207,69,32,0.07)", border: "1px solid rgba(207,69,32,0.18)" }}>
+            <Info className="w-3.5 h-3.5 shrink-0" style={{ color: "#cf4520" }} />
+            <span style={{ fontSize: "12px", color: "var(--wcm-text-secondary)" }}>Tap a region to zoom in</span>
+          </div>
+          <div
+            className="hidden lg:flex items-center px-3 py-1.5 rounded-full w-fit"
+            style={{ background: "rgba(179,27,27,0.06)", border: "1px solid rgba(179,27,27,0.14)" }}
+          >
+            <span style={{ fontSize: "12px", color: "var(--wcm-text-secondary)" }}>Region details appear here</span>
+          </div>
+
+          <ParallaxFloat y={ySlow} className="w-full mx-auto lg:mx-0 max-w-[380px] h-full overflow-hidden">
             <motion.div
               initial={{ opacity: 0, x: -30 }}
               animate={inView ? { opacity: 1, x: 0 } : {}}
               transition={{ duration: 0.7, delay: 0.15 }}
-              className="w-full flex flex-col items-center"
+              className="w-full h-full"
             >
-            <div className="mb-4 flex items-center gap-2 px-3 py-1.5 rounded-full" style={{ background: "rgba(207,69,32,0.07)", border: "1px solid rgba(207,69,32,0.18)" }}>
-              <Info className="w-3.5 h-3.5" style={{ color: "#cf4520" }} />
-              <span style={{ fontSize: "12px", color: "var(--wcm-text-secondary)" }}>Tap a region to zoom in</span>
-            </div>
+            <div className="relative p-3 rounded-2xl w-full max-w-[360px] mx-auto lg:mx-0 h-full overflow-hidden" style={{ background: schematicTheme.bg, border: "1px solid rgba(0,0,0,0.08)", boxShadow: "0 8px 32px rgba(0,0,0,0.08)" }}>
+              <div className="overflow-hidden rounded-lg">
+                <AnatomyMap
+                  activeId={activeId}
+                  hoveredId={hoveredId}
+                  onRegionClick={handleClick}
+                  onRegionHover={setHoveredId}
+                  zoom={zoom}
+                />
+              </div>
 
-            <div className="relative p-3 rounded-2xl w-full max-w-[360px] overflow-hidden" style={{ background: "#ffffff", border: "1px solid rgba(0,0,0,0.08)", boxShadow: "0 8px 32px rgba(0,0,0,0.1)", minHeight: "460px" }}>
-              <motion.div
-                className="origin-center"
-                animate={{ scale: zoom.scale }}
-                transition={{ type: "spring", stiffness: 90, damping: 18 }}
-                style={{ transformOrigin: `50% ${zoom.originY}` }}
-              >
-                <AnatomyMap activeId={activeId} hoveredId={hoveredId} onRegionClick={handleClick} onRegionHover={setHoveredId} />
-              </motion.div>
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-1.5 mt-3 pt-3 border-t border-black/5">
+                {regions.map((r) => {
+                  const selected = activeId === r.id;
+                  const hovered = hoveredId === r.id;
+                  return (
+                    <button
+                      key={r.id}
+                      type="button"
+                      onClick={() => handleClick(r.id)}
+                      onMouseEnter={() => setHoveredId(r.id)}
+                      onMouseLeave={() => setHoveredId(null)}
+                      className="px-2 py-1.5 rounded-lg transition-all text-center w-full"
+                      style={{
+                        fontSize: "10px",
+                        fontWeight: 600,
+                        lineHeight: 1.3,
+                        background: selected || hovered ? r.lightBg : "var(--wcm-bg-light)",
+                        color: selected || hovered ? r.color : "var(--wcm-text-muted)",
+                        border: `1px solid ${selected || hovered ? r.color : "var(--wcm-border)"}`,
+                        cursor: "pointer",
+                      }}
+                    >
+                      {schematicRegions.find((s) => s.id === r.id)?.labelShort ?? r.label}
+                    </button>
+                  );
+                })}
+              </div>
             </div>
             </motion.div>
           </ParallaxFloat>
 
-          <ParallaxFloat y={yReverse} className="w-full min-h-[400px] lg:min-h-[460px] lg:self-stretch">
+          <ParallaxFloat y={yReverse} className="w-full h-full min-h-0">
+            <div className="h-full min-h-[280px] lg:min-h-0">
             <AnimatePresence mode="wait">
               {activeRegion ? (
                 <motion.div key={activeRegion.id} initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} transition={{ duration: 0.3 }}
-                  className="relative rounded-2xl p-7"
+                  className="relative rounded-2xl p-6 lg:p-7 w-full h-full"
                   style={{ background: "#ffffff", border: `1px solid ${activeRegion.color}30`, borderTop: `3px solid ${activeRegion.color}`, boxShadow: "0 8px 32px rgba(0,0,0,0.1)" }}
                 >
                   <button onClick={() => setActiveId(null)} style={{ position: "absolute", top: "16px", right: "16px", background: "none", border: "none", cursor: "pointer", color: "var(--wcm-text-secondary)" }}
@@ -340,25 +418,35 @@ export function BodyExplorer() {
                   </div>
                 </motion.div>
               ) : (
-                <motion.div key="placeholder" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-                  className="flex flex-col items-center justify-center text-center rounded-2xl"
-                  style={{ background: "#ffffff", border: "1px solid rgba(0,0,0,0.08)", minHeight: "420px", padding: "48px 32px", boxShadow: "0 2px 12px rgba(0,0,0,0.06)" }}
+                <motion.div
+                  key="placeholder"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  className="flex flex-col items-center justify-center text-center rounded-2xl w-full h-full"
+                  style={{
+                    background: "#ffffff",
+                    border: "1px solid rgba(0,0,0,0.08)",
+                    padding: "32px 28px",
+                    boxShadow: "0 2px 12px rgba(0,0,0,0.06)",
+                  }}
                 >
-                  <motion.div animate={{ opacity: [0.55, 1, 0.55] }} transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }} className="mb-6">
-                    <img
-                      src={bodyAnatomyImage}
-                      alt=""
-                      className="w-24 h-auto rounded-lg opacity-80"
-                      style={{ filter: "saturate(0.7)" }}
-                    />
-                  </motion.div>
-                  <p style={{ fontSize: "15px", fontWeight: 600, color: "var(--wcm-crimson)", marginBottom: "6px" }}>Select a body region to explore</p>
-                  <p style={{ fontSize: "14px", lineHeight: 1.6, color: "var(--wcm-text-secondary)" }}>
-                    Tap a region on the anatomy map to see what may be found — in clear, patient-friendly language.
+                  <div
+                    className="mb-5 flex items-center justify-center w-14 h-14 rounded-full"
+                    style={{ background: "rgba(207,69,32,0.08)", border: "1px solid rgba(207,69,32,0.2)" }}
+                  >
+                    <Info className="w-6 h-6" style={{ color: "#cf4520" }} />
+                  </div>
+                  <p style={{ fontSize: "15px", fontWeight: 600, color: "var(--wcm-crimson)", marginBottom: "6px" }}>
+                    Select a body region to explore
+                  </p>
+                  <p className="max-w-sm" style={{ fontSize: "14px", lineHeight: 1.6, color: "var(--wcm-text-secondary)" }}>
+                    Tap a region on the anatomy map or choose a label below to see what may be found — in clear, patient-friendly language.
                   </p>
                 </motion.div>
               )}
             </AnimatePresence>
+            </div>
           </ParallaxFloat>
         </div>
       </div>
