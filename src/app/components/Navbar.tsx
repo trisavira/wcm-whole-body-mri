@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { motion, useScroll } from "motion/react";
 import { Menu, X } from "lucide-react";
 import { Button } from "./ui/button";
+import { BrandLogo } from "./BrandLogo";
 import { trackCTA } from "../../lib/analytics";
 
 /** Nav order follows BRD §8.1 information architecture */
@@ -25,8 +26,6 @@ export function Navbar() {
 
   const onHero = !scrolled;
   const linkColor = onHero ? "rgba(255,255,255,0.9)" : "var(--wcm-text-muted)";
-  const brandColor = onHero ? "#ffffff" : "#b31b1b";
-  const subColor = onHero ? "#FFC72C" : "#cf4520";
 
   return (
     <motion.header
@@ -42,10 +41,9 @@ export function Navbar() {
       }}
     >
       {scrolled && <div className="h-0.5 w-full" style={{ background: "#b31b1b" }} />}
-      <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
-        <a href="#" className="flex flex-col leading-none group">
-          <span style={{ fontSize: "15px", fontWeight: 700, color: brandColor }}>Weill Cornell Medicine</span>
-          <span style={{ fontSize: "10px", letterSpacing: "0.12em", color: subColor }}>WHOLE BODY MRI</span>
+      <div className="max-w-7xl mx-auto px-6 h-[4.5rem] flex items-center justify-between">
+        <a href="#" className="flex items-center shrink-0" aria-label="Weill Cornell Imaging home">
+          <BrandLogo height={56} tone={onHero ? "light" : "dark"} />
         </a>
 
         <nav className="hidden lg:flex items-center gap-1">

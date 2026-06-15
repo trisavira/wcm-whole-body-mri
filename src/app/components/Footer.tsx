@@ -1,4 +1,4 @@
-import { Activity } from "lucide-react";
+import { BrandLogo } from "./BrandLogo";
 
 const links = {
   Program: [
@@ -34,16 +34,8 @@ export function Footer() {
       <div className="max-w-7xl mx-auto px-6">
         <div className="grid grid-cols-2 lg:grid-cols-6 gap-8 mb-12">
           <div className="col-span-2">
-            <div className="flex items-center gap-2.5 mb-4">
-              <div className="relative w-8 h-8">
-                <div className="absolute inset-0 rounded-lg" style={{ background: "rgba(207,69,32,0.1)" }} />
-                <div className="absolute inset-0 rounded-lg" style={{ border: "1px solid rgba(207,69,32,0.3)" }} />
-                <Activity className="absolute inset-0 m-auto w-4 h-4" style={{ color: "#e7751d" }} />
-              </div>
-              <div className="flex flex-col leading-none">
-                <span style={{ fontSize: "15px", fontWeight: 600, color: "#b31b1b" }}>Weill Cornell Medicine</span>
-                <span style={{ fontSize: "10px", letterSpacing: "0.12em", color: "#cf4520" }}>WHOLE BODY MRI</span>
-              </div>
+            <div className="mb-4">
+              <BrandLogo height={52} tone="dark" />
             </div>
             <p className="mb-4" style={{ fontSize: "13px", lineHeight: 1.7, color: "var(--wcm-text-secondary)" }}>
               Care. Discover. Teach. Whole-Body MRI is the first offering in our Early Detection & Prevention program — science-based imaging within a leading academic health system.
